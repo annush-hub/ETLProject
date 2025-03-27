@@ -1,0 +1,8 @@
+Before running the program:
+30 000
+
+After running the program:
+12 907
+
+Duplicate rows:
+17 093

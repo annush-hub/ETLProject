@@ -1,0 +1,2 @@
+If I knew the program would be handling a 10GB CSV input file, I would split the input file into smaller chunks (about 1000 rows each) and process each in a separate thread using Task.Run(). To make sure all threads have been completed before proceeding, I would use Task.WhenAll(tasks). This approach speeds up the processing of large files due to distributing the workload across multiple threads. 
+Also, it would be better to create indexes of the table after the import of all the data is finished. 

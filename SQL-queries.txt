@@ -1,0 +1,47 @@
+1. Creating the database
+	CREATE DATABASE ETLDatabase;
+2. Creating the table
+
+	CREATE TABLE Trips(
+		Id INT IDENTITY(1,1) PRIMARY KEY,
+		PULocationID INT,
+		DOLocationID INT,
+		fare_amount DECIMAL(10,2),
+		tip_amount DECIMAL(10,2),
+		passenger_count INT,
+		trip_distance DECIMAL(10,3),
+		tpep_pickup_datetime DATETIME,
+		tpep_dropoff_datetime DATETIME,
+		store_and_fwd_flag VARCHAR(3),
+	);
+	
+3. Optimisation for queries like these
+	 
+	Highest average tip by pick-up location:
+  		SELECT PULocationID,AVG(tip_amount) as average_tips
+  		FROM Trips
+  		GROUP BY PULocationID
+  		ORDER BY average_tips DESC;
+	Created an index to speed up aggregations
+		CREATE INDEX idx_tip ON Trips (PULocationId, tip_amount);
+
+	100 longest fares by trip distance:
+		SELECT TOP 100 trip_distance FROM Trips
+		ORDER BY trip_distance DESC;
+	Added  an index to optimise sorting for fetching top 100 longest trips
+		CREATE INDEX idx_distance ON Trips (trip_distance);
+
+	100 longest fares by time spent travelling:
+		SELECT TOP 100 tpep_pickup_datetime, tpep_dropoff_datetime, 
+		DATEDIFF(MINUTE, tpep_pickup_datetime, tpep_dropoff_datetime) AS duration FROM Trips
+		ORDER BY duration DESC;
+	Indexed tpep_pickup_datetime, tpep_dropoff_datetime columns for faster calculations
+		CREATE INDEX idx_time ON Trips (tpep_pickup_datetime, tpep_dropoff_datetime);
+
+	Search by pick-up location:
+		SELECT * FROM Trips
+		WHERE PULocationId = 132;
+	Added an index on PULocationId column for faster search performance, when filtering by PULocationId:
+		CREATE INDEX idx_pu_loc ON Trips (PULocationId);
+	
+	
